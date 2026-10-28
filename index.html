@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Boneo Primary School - TV Display Board</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
+    body { 
+      font-family: 'Plus Jakarta Sans', sans-serif; 
+      background-color: #f8fafc;
+      color: #0f172a;
+    }
+    .active-card {
+      box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.25), 0 8px 10px -6px rgba(79, 70, 229, 0.2);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between p-6 sm:p-8 select-none">
+
+  <!-- TOP BAR: SCHOOL BRANDING & LIVE CLOCK -->
+  <header class="bg-white border border-slate-200 shadow-sm rounded-2xl p-5 flex justify-between items-center">
+    <div class="flex items-center space-x-4">
+      <div class="bg-indigo-600 text-white w-14 h-14 rounded-2xl flex items-center justify-center text-2xl font-black shadow-md shadow-indigo-200">
+        BPS
+      </div>
+      <div>
+        <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Boneo Primary School</h1>
+        <div class="flex items-center space-x-2 mt-0.5">
+          <span class="bg-indigo-100 text-indigo-700 font-bold text-xs px-2.5 py-0.5 rounded-md uppercase tracking-wide">Term 4</span>
+          <span class="text-slate-400 text-xs font-semibold">•</span>
+          <span id="departmentBadge" class="text-slate-600 font-bold text-xs uppercase tracking-wide">Specialists Schedule</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- LIVE TIME & DAY DISPLAY -->
+    <div class="flex items-center space-x-6">
+      <div class="text-right">
+        <div id="liveDayText" class="text-xs font-extrabold uppercase tracking-widest text-indigo-600">WEDNESDAY</div>
+        <div id="liveTimeText" class="text-3xl font-black text-slate-900 tracking-tight font-mono">09:45:00</div>
+      </div>
+      <div class="h-10 w-px bg-slate-200"></div>
+      <div class="flex items-center space-x-2 bg-emerald-50 text-emerald-700 px-3.5 py-2 rounded-xl border border-emerald-200 font-bold text-sm">
+        <span class="relative flex h-3 w-3">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+        </span>
+        <span>ON AIR</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ROTATION PROGRESS BAR -->
+  <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden my-4 shadow-inner">
+    <div id="progressBar" class="bg-indigo-600 h-full w-0 transition-all duration-150"></div>
+  </div>
+
+  <!-- MAIN DISPLAY BOARD CONTENT -->
+  <main class="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-6 my-2">
+
+    <!-- LEFT COLUMN: CURRENT ACTIVE SESSION HERO CARD -->
+    <section class="lg:col-span-1 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col justify-between relative overflow-hidden">
+      <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-bl-full -z-0"></div>
+
+      <div class="relative z-10 space-y-4">
+        <div class="flex justify-between items-center">
+          <span class="text-xs font-extrabold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full uppercase tracking-wider">Current Session</span>
+          <span id="periodBadge" class="text-xs font-bold text-slate-500">PERIOD 1</span>
+        </div>
+
+        <div>
+          <h2 id="staffName" class="text-2xl font-black text-slate-900 leading-tight">Katie & Kieran</h2>
+          <p id="staffRole" class="text-sm font-bold text-indigo-600 mt-1">SPARK & Cyber Academy</p>
+        </div>
+
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-2">
+          <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Assigned Group</div>
+          <div id="activeClass" class="text-3xl font-black text-slate-900">6B</div>
+          <div id="activeTime" class="text-xs font-bold text-slate-500">08:45 AM – 09:45 AM</div>
+        </div>
+      </div>
+
+      <!-- NEXT UP INDICATOR -->
+      <div class="relative z-10 border-t border-slate-100 pt-4 mt-6">
+        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Next Session</div>
+        <div class="flex justify-between items-center">
+          <span id="nextClass" class="font-bold text-slate-800 text-lg">6A</span>
+          <span id="nextTime" class="text-xs font-semibold text-slate-500">09:45 AM</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT COLUMN: FULL DAY TIMETABLE GRID -->
+    <section class="lg:col-span-3 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-black text-slate-900 tracking-tight">Full Day Schedule Overview</h3>
+        <div id="rotatorCounter" class="text-xs font-bold bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg border border-slate-200">
+          Staff 1 of 15
+        </div>
+      </div>
+
+      <!-- DAY SCHEDULE CARDS GRID -->
+      <div id="scheduleCards" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
+        <!-- Cards generated dynamically -->
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER CONTROLS FOR MANUAL OVERRIDE -->
+  <footer class="bg-white border border-slate-200 rounded-2xl p-4 flex justify-between items-center text-xs font-bold text-slate-500">
+    <div>Boneo Primary School • Display Board System</div>
+    <div class="flex space-x-4">
+      <span>Auto-rotating Mode Active</span>
+      <span>•</span>
+      <span>Target: Term 4 Latest</span>
+    </div>
+  </footer>
+
+  <script>
+    // COMBINED LATEST TERM 4 SCHEDULE DATA
+    const DISPLAY_DATA = [
+      // SPECIALISTS
+      { name: "Katie & Kieran", role: "SPARK & Cyber Academy", dept: "Specialist", schedule: ["6B", "6A", "Recess", "3C", "3B", "Lunch", "1B"] },
+      { name: "David", role: "Physical Education", dept: "Specialist", schedule: ["APT", "5A", "Recess", "3A", "3C", "Lunch", "PLC Leader"] },
+      { name: "Libby", role: "Music Specialist", dept: "Specialist", schedule: ["APT", "APT", "Recess", "3B", "3A", "Lunch", "2A PLC"] },
+      { name: "Pat", role: "Art Specialist", dept: "Specialist", schedule: ["6A", "6B", "Recess", "PA", "PB", "Lunch", "PA English"] },
+      
+      // ES SUPPORT
+      { name: "Paula", role: "Speech & Literacy Support", dept: "Education Support", schedule: ["Speech/Lit", "Speech/Lit", "Tea Break", "Recess", "Speech/Lit", "Speech/Lit", "Lunch Duty"] },
+      { name: "Emma", role: "Year 3 Support", dept: "Education Support", schedule: ["Year 3", "Year 3 (Luka)", "Tea Break", "Recess", "3A Support", "Year 3", "Lunch Duty"] },
+      { name: "Jamie", role: "Year 6 & Year 4 Support", dept: "Education Support", schedule: ["Year 6", "Year 6", "Tea Break", "Recess", "Year 4", "Year 4 Plan", "Lunch Duty"] },
+      { name: "Kate", role: "Year 1 & Year 3 Support", dept: "Education Support", schedule: ["Year 1", "Year 3", "Tea Break", "Recess", "Year 1", "Harlow Grp", "Lunch Duty"] }
+    ];
+
+    const PERIOD_TIMES = [
+      { name: "P1", start: "08:45", end: "09:45" },
+      { name: "P2", start: "09:45", end: "10:45" },
+      { name: "REC", start: "10:45", end: "11:15", isBreak: true },
+      { name: "P3", start: "11:15", end: "12:15" },
+      { name: "P4", start: "12:15", end: "13:15" },
+      { name: "LUN", start: "13:15", end: "14:15", isBreak: true },
+      { name: "P5", start: "14:15", end: "15:15" }
+    ];
+
+    let currentIndex = 0;
+    let progress = 0;
+
+    function updateClock() {
+      const now = new Date();
+      document.getElementById("liveTimeText").textContent = now.toLocaleTimeString();
+    }
+
+    function renderDisplay() {
+      const item = DISPLAY_DATA[currentIndex];
+      document.getElementById("staffName").textContent = item.name;
+      document.getElementById("staffRole").textContent = item.role;
+      document.getElementById("departmentBadge").textContent = `${item.dept} Schedule`;
+      document.getElementById("rotatorCounter").textContent = `${currentIndex + 1} of ${DISPLAY_DATA.length}`;
+
+      // Set default demo current session
+      document.getElementById("activeClass").textContent = item.schedule[0];
+      document.getElementById("nextClass").textContent = item.schedule[1];
+
+      // Render 7 period cards
+      const container = document.getElementById("scheduleCards");
+      container.innerHTML = PERIOD_TIMES.map((p, idx) => {
+        const title = item.schedule[idx] || "APT";
+        const isActive = idx === 0; // Highlighting Period 1 for demo
+        return `
+          <div class="p-4 rounded-xl border flex flex-col justify-between ${isActive ? 'bg-indigo-600 text-white border-indigo-600 active-card' : p.isBreak ? 'bg-slate-100 border-slate-200 text-slate-400' : 'bg-slate-50 border-slate-200 text-slate-800'}">
+            <div>
+              <div class="text-[10px] font-extrabold uppercase tracking-wider ${isActive ? 'text-indigo-200' : 'text-slate-400'}">${p.name}</div>
+              <div class="text-xs font-semibold ${isActive ? 'text-indigo-100' : 'text-slate-400'}">${p.start}</div>
+            </div>
+            <div class="text-xl font-black mt-4 mb-2 ${isActive ? 'text-white' : p.isBreak ? 'text-slate-400 italic text-sm' : 'text-slate-900'}">${title}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function startRotation() {
+      setInterval(() => {
+        progress += 2;
+        if (progress >= 100) {
+          progress = 0;
+          currentIndex = (currentIndex + 1) % DISPLAY_DATA.length;
+          renderDisplay();
+        }
+        document.getElementById("progressBar").style.width = progress + "%";
+      }, 150);
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      setInterval(updateClock, 1000);
+      updateClock();
+      renderDisplay();
+      startRotation();
+    });
+  </script>
+</body>
+</html>
